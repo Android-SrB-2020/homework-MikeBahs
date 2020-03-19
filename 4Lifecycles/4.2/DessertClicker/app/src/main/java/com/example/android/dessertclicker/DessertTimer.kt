@@ -1,0 +1,43 @@
+package com.example.android.dessertclicker
+
+import android.os.Handler
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import timber.log.Timber
+
+
+class DessertTimer(lifecycle: Lifecycle) : LifecycleObserver {
+
+    var secondsCount = 0
+
+
+    private var handler = Handler()
+    private lateinit var runnable: Runnable
+
+    init {
+
+        lifecycle.addObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun startTimer() {
+        // Create the runnable action, which prints out a log and increments the seconds counter
+        runnable = Runnable {
+            secondsCount++
+            Timber.i("Timer is at : $secondsCount")
+
+            handler.postDelayed(runnable, 1000)
+        }
+
+        // This is what initially starts the timer
+        handler.postDelayed(runnable, 1000)
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun stopTimer() {
+
+        handler.removeCallbacks(runnable)
+    }
+}
